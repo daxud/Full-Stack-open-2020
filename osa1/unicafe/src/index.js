@@ -18,18 +18,35 @@ const Statisctics = ({ good, bad, neutral }) => {
 
   // jos palautetta on annettu siirtyy suoraan tähän
   return (
-    <div>
-      <StatiscticsLine text = "good" value = {good} />
-      <StatiscticsLine text = "bad" value = {bad} />
-      <StatiscticsLine text = "neutral" value = {neutral} />
-      <StatiscticsLine text = "average" value = {(good-bad)/(good+bad+neutral)} />
-      <StatiscticsLine text = "positive" value = {100*good/(good+bad+neutral) + " %"} />
-    </div>
+    <table>
+      <tbody>
+        <tr>
+          <td>good</td>
+          <td>{good}</td>
+        </tr>
+        <tr>
+          <td>bad</td>
+          <td>{bad}</td>
+        </tr>
+        <tr>
+          <td>neutral</td>
+          <td>{neutral}</td>
+        </tr>
+        <tr>
+          <td>average</td>
+          <td>{(good-bad)/(good+bad+neutral)}</td>
+        </tr>
+        <tr>
+          <td>positive</td>
+          <td>{100*good/(good+bad+neutral) + " %"}</td>
+        </tr>
+      </tbody>
+    </table>
   )
 }
 
 /***
- * Komponentti joka vastaa napeista
+ * Komponentti joka vastaa tilastoriveistä
 ***/
 const StatiscticsLine = ({ text, value }) => (<p>{text} {value}</p>)
 
