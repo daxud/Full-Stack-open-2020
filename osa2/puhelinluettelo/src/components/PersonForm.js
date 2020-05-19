@@ -1,6 +1,6 @@
 import React from 'react'
 
-const PersonForm = ({submitHandler, nameChangeHandler, numberChangeHandler}) => {
+const PersonForm = ({name, number, submitHandler, nameChangeHandler, numberChangeHandler}) => {
     return(
         <form onSubmit = {submitHandler}>
                 <div>name: <input value = {name} onChange = {nameChangeHandler}/></div>
