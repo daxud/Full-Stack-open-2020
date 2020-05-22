@@ -2,27 +2,24 @@ import React, { useState, useEffect } from 'react'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
-import axios from 'axios'
+import personService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [ persons, setPersons] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
+  const [notification, setNotification] = useState(null)
+  // true if failed, false is succeed
+  const [operationFailed, setFail] = useState(null)
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        const persons = response.data
-        console.log(persons)
-        setPersons(persons)
-      })
+    personService
+      .getAll()
+        .then(initialPersons => setPersons(initialPersons))    
   }, [])
 
-  console.log('render', persons.length, 'notes')
 
   const addPerson = (event) => {
       event.preventDefault()
@@ -31,11 +28,21 @@ const App = () => {
         person.name === newName).length === 0
 
       if (isNewPerson) {
-        setPersons(persons.concat(person))
-        setNewName('')
-        setNewNumber('')
+        personService
+          .create(person)
+          .then(returnedPerson => {
+            setPersons(persons.concat(returnedPerson))
+            setNewName('')
+            setNewNumber('')
+            setFail(false)
+            setNotification("Added " + person.name)
+            setTimeout( ()=>setNotification(null), 3000 )
+          })
       } else {
-        handleError()
+        if (window.confirm(person.name + " is already in the phonebook. Replace the old number?")) {
+          const id = persons.find(p => p.name.toLowerCase() === person.name.toLowerCase()).id
+          updatePerson(id, person)
+        } 
       }
   }
 
@@ -58,11 +65,43 @@ const App = () => {
     window.alert(msg)
   }
 
+  const deletePerson = (event) => {
+    const person = persons.find(p => p.id === parseInt(event.target.id))
+    if (window.confirm("Delete " + person.name + "?")) {
+      personService
+        .remove(person.id)
+          .then(removedId => {
+            setPersons(persons.filter(p => p.id !== person.id))
+            setFail(false)
+            setNotification("Deleted " + person.name)
+            setTimeout( ()=>setNotification(null), 3000 )
+          })  
+    }
+  }
+
+  const updatePerson = (id, person) => {
+    personService
+      .update(id, person)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => person.id !== id ? person: returnedPerson))
+          setNewName('')
+          setNewNumber('')
+          setFail(false)
+          setNotification("Updated " + person.name)
+          setTimeout( ()=>setNotification(null), 3000 )
+        })
+    .catch(error => {
+      setFail(true)
+      setNotification("Information of " + person.name + " has already been removed from the server.")
+      setTimeout( ()=>setNotification(null), 3000 )
+    })
+  }
+
 
   return (
     <div>
       <h2>Phonebook</h2>
-
+      <Notification message={notification} fail={operationFailed}/>
       <Filter filter = {filter} changeHandler = {handleFilterChange}/>
       
       <h3>Add a new</h3>
@@ -76,7 +115,7 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons persons = {persons} filter = {filter} />
+      <Persons persons = {persons} filter = {filter} deletePerson={deletePerson} />
     </div>
   )
 
