@@ -6,10 +6,10 @@ import personService from './services/persons'
 import Notification from './components/Notification'
 
 const App = () => {
-  const [ persons, setPersons] = useState([])
-  const [ newName, setNewName ] = useState('')
-  const [ newNumber, setNewNumber ] = useState('')
-  const [ filter, setFilter ] = useState('')
+  const [persons, setPersons] = useState([])
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [filter, setFilter] = useState('')
   const [notification, setNotification] = useState(null)
   // true if failed, false is succeed
   const [operationFailed, setFail] = useState(null)
@@ -17,38 +17,38 @@ const App = () => {
   useEffect(() => {
     personService
       .getAll()
-        .then(initialPersons => setPersons(initialPersons))    
+      .then(initialPersons => setPersons(initialPersons))
   }, [])
 
 
   const addPerson = (event) => {
-      event.preventDefault()
-      const person = {name: newName, number: newNumber}
-      const isNewPerson = persons.filter(person =>
-        person.name === newName).length === 0
+    event.preventDefault()
+    const person = { name: newName, number: newNumber }
+    const isNewPerson = persons.filter(person =>
+      person.name === newName).length === 0
 
-      if (isNewPerson) {
-        personService
-          .create(person)
-          .then(returnedPerson => {
-            setPersons(persons.concat(returnedPerson))
-            setNewName('')
-            setNewNumber('')
-            setFail(false)
-            setNotification("Added " + person.name)
-            setTimeout( ()=>setNotification(null), 3000 )
-          })
-      } else {
-        if (window.confirm(person.name + " is already in the phonebook. Replace the old number?")) {
-          const id = persons.find(p => p.name.toLowerCase() === person.name.toLowerCase()).id
-          updatePerson(id, person)
-        } 
+    if (isNewPerson) {
+      personService
+        .create(person)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+          setFail(false)
+          setNotification("Added " + person.name)
+          setTimeout(() => setNotification(null), 3000)
+        })
+    } else {
+      if (window.confirm(person.name + " is already in the phonebook. Replace the old number?")) {
+        const id = persons.find(p => p.name.toLowerCase() === person.name.toLowerCase()).id
+        updatePerson(id, person)
       }
+    }
   }
 
   const handleNameChange = (event) => {
-      console.log(event.target.value)
-      setNewName(event.target.value)
+    console.log(event.target.value)
+    setNewName(event.target.value)
   }
 
   const handleNumberChange = (event) => {
@@ -70,52 +70,52 @@ const App = () => {
     if (window.confirm("Delete " + person.name + "?")) {
       personService
         .remove(person.id)
-          .then(removedId => {
-            setPersons(persons.filter(p => p.id !== person.id))
-            setFail(false)
-            setNotification("Deleted " + person.name)
-            setTimeout( ()=>setNotification(null), 3000 )
-          })  
+        .then(removedId => {
+          setPersons(persons.filter(p => p.id !== person.id))
+          setFail(false)
+          setNotification("Deleted " + person.name)
+          setTimeout(() => setNotification(null), 3000)
+        })
     }
   }
 
   const updatePerson = (id, person) => {
     personService
       .update(id, person)
-        .then(returnedPerson => {
-          setPersons(persons.map(person => person.id !== id ? person: returnedPerson))
-          setNewName('')
-          setNewNumber('')
-          setFail(false)
-          setNotification("Updated " + person.name)
-          setTimeout( ()=>setNotification(null), 3000 )
-        })
-    .catch(error => {
-      setFail(true)
-      setNotification("Information of " + person.name + " has already been removed from the server.")
-      setTimeout( ()=>setNotification(null), 3000 )
-    })
+      .then(returnedPerson => {
+        setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+        setNewName('')
+        setNewNumber('')
+        setFail(false)
+        setNotification("Updated " + person.name)
+        setTimeout(() => setNotification(null), 3000)
+      })
+      .catch(error => {
+        setFail(true)
+        setNotification("Information of " + person.name + " has already been removed from the server.")
+        setTimeout(() => setNotification(null), 3000)
+      })
   }
 
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notification} fail={operationFailed}/>
-      <Filter filter = {filter} changeHandler = {handleFilterChange}/>
-      
+      <Notification message={notification} fail={operationFailed} />
+      <Filter filter={filter} changeHandler={handleFilterChange} />
+
       <h3>Add a new</h3>
 
       <PersonForm
-      name = {newName}
-      number = {newNumber}
-      submitHandler = {addPerson}
-      nameChangeHandler = {handleNameChange}
-      numberChangeHandler = {handleNumberChange}/>
+        name={newName}
+        number={newNumber}
+        submitHandler={addPerson}
+        nameChangeHandler={handleNameChange}
+        numberChangeHandler={handleNumberChange} />
 
       <h3>Numbers</h3>
 
-      <Persons persons = {persons} filter = {filter} deletePerson={deletePerson} />
+      <Persons persons={persons} filter={filter} deletePerson={deletePerson} />
     </div>
   )
 
