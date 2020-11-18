@@ -38,6 +38,11 @@ const App = () => {
           setNotification("Added " + person.name)
           setTimeout(() => setNotification(null), 3000)
         })
+        .catch(error => {
+          setFail(true)
+          setNotification(error.response.data.error)
+          setTimeout(() => setNotification(null), 5000)
+        })
     } else {
       if (window.confirm(person.name + " is already in the phonebook. Replace the old number?")) {
         const id = persons.find(p => p.name.toLowerCase() === person.name.toLowerCase()).id
@@ -66,7 +71,7 @@ const App = () => {
   }
 
   const deletePerson = (event) => {
-    const person = persons.find(p => p.id === parseInt(event.target.id))
+    const person = persons.find(p => p.id === event.target.id)
     if (window.confirm("Delete " + person.name + "?")) {
       personService
         .remove(person.id)
