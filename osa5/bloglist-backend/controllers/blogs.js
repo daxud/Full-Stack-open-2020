@@ -35,12 +35,9 @@ blogsRouter.delete('/:id', async (request, response) => {
 })
 
 blogsRouter.put('/:id', async (request, response) => {
-  const body = request.body
-  const updatedBlog = {
-    likes: body.likes === undefined ? 0 : body.likes
-  }
+  let updatedBlog = request.body
   try {
-    const re = await Blog.findByIdAndUpdate(request.params.id, updatedBlog)
+    const re = await Blog.findByIdAndUpdate(request.params.id, updatedBlog, {new: true})
     response.json(re)
   } catch {
     response.status(404).send({ error: 'no such id' })

@@ -1,6 +1,10 @@
-PUT http://localhost:3003/api/blogs/5fb52ef1597b0810b0c4b69a
+PUT http://localhost:3003/api/blogs/5fb761ffc000a229944f9750
 Content-Type: application/json
 
 {
-    "likes": "15"
+    "title": "The playbook - Art of getting females",
+    "author": "Väinö Tuuli",
+    "url": "www.väpä69.fi",
+    "likes": "1",
+    "id": "5fb761ffc000a229944f9750"
 }
