@@ -7,7 +7,7 @@ const Notification = ({ message, fail }) => {
   }
 
   return (
-    <div className={style}>
+    <div id='notification' className={style}>
       {message}
     </div>
   )

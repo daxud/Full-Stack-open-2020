@@ -34,7 +34,7 @@ const BlogForm = ({ createBlog }) => {
         url:
         <input id='url' value={url} onChange={handleUrlChange}></input>
         <br></br>
-        <button type="submit">create</button>
+        <button id='create' type="submit">create</button>
       </form>
     </div>
   )

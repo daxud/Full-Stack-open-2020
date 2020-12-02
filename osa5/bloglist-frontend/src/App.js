@@ -60,7 +60,8 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     const response = await blogService.createBlog(blogJSON)
     console.log(response)
-    setBlogs(blogs.concat({ ...response, user: currentUser.name }))
+    //this causes problems because the user need to reload the page for the user to show correctly
+    setBlogs(blogs.concat({ ...response, user: currentUser }))
     setNotification(`a new blog ${blogJSON.title} by ${blogJSON.author} added`)
     setFail(false)
     setTimeout(() => {setNotification(null)}, 5000)
@@ -106,11 +107,12 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <form onSubmit={handleLogin}>
+    <form id='loginForm' onSubmit={handleLogin}>
       <div>
         username
         <input
           type="text"
+          id='username'
           value={username}
           name="Username"
           onChange={({ target }) => setUsername(target.value)}
@@ -120,12 +122,13 @@ const App = () => {
         password
         <input
           type="password"
+          id='password'
           value={password}
           name="Password"
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>
-      <button type="submit">login</button>
+      <button id='login-button' type="submit">login</button>
     </form>
   )
 
@@ -153,7 +156,7 @@ const App = () => {
       <Notification message={notification} fail={fail}/>
       <div>
         You are logged in as {JSON.parse(user).name}
-        <button onClick={ () => {
+        <button id='logout' onClick={ () => {
           window.localStorage.clear()
           window.location.reload()
         }
@@ -162,7 +165,7 @@ const App = () => {
       <br></br>
       <div>
         <h2>create new</h2>
-        <Togglable buttonLabel="new blog" ref={blogFormRef}>
+        <Togglable id="createNew" buttonLabel="new blog" ref={blogFormRef}>
           <BlogForm createBlog={createBlog}/>
         </Togglable>
       </div>
